@@ -18,7 +18,9 @@ namespace SOM3.Classes.XpoSqlTriggers
         public DateTime? timestamp;
     }
 
-
+    /// <summary>
+    /// Database update trigger
+    /// </summary>
     public class SQLTriggerEvent : EventArgs
     {
         public string name { get; set; }
@@ -36,6 +38,10 @@ namespace SOM3.Classes.XpoSqlTriggers
         
         public static Object syncLock = new Object();
 
+        /// <summary>
+        /// Create a new instance of the XpoTrigger Class
+        /// </summary>
+        /// <param name="time">Time in ms to refresh to look for changes (Default is 1000ms)</param>
         public XpoTrigger(double time = 1000)
         {
             context = SynchronizationContext.Current;
@@ -76,7 +82,10 @@ namespace SOM3.Classes.XpoSqlTriggers
             }
         }
 
-
+        /// <summary>
+        /// Register new event
+        /// </summary>
+        /// <param name="name">Event Name</param>
         public static void register(string name)
         {
             if(!session.IsConnected)
@@ -99,6 +108,10 @@ namespace SOM3.Classes.XpoSqlTriggers
 
         }
 
+        /// <summary>
+        /// Update event
+        /// </summary>
+        /// <param name="name">Event Name</param>
         public static void update(string name)
         {
             if (!session.IsConnected)
@@ -119,6 +132,10 @@ namespace SOM3.Classes.XpoSqlTriggers
             }
         }
 
+        /// <summary>
+        /// Register an event to watch for
+        /// </summary>
+        /// <param name="name">Event Name</param>
         public void registerSQLTrigger(string name)
         {
             if (!session.IsConnected)
