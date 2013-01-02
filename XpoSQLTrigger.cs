@@ -44,6 +44,7 @@ namespace SOM3.Classes.XpoSqlTriggers
         /// <param name="time">Time in ms to refresh to look for changes (Default is 1000ms)</param>
         public XpoTrigger(double time = 1000)
         {
+            session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
             context = SynchronizationContext.Current;
             if (context == null)
             {
