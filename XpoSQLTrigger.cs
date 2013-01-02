@@ -44,7 +44,7 @@ namespace SOM3.Classes.XpoSqlTriggers
         /// <param name="time">Time in ms to refresh to look for changes (Default is 1000ms)</param>
         public XpoTrigger(double time = 1000)
         {
-            session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
+            session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;            
             context = SynchronizationContext.Current;
             if (context == null)
             {
@@ -89,8 +89,11 @@ namespace SOM3.Classes.XpoSqlTriggers
         /// <param name="name">Event Name</param>
         public static void register(string name)
         {
-            if(!session.IsConnected)
+            if (!session.IsConnected)
+            {
+                session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;      
                 session.Connect();
+            }
             XpoSQLTriggerInfo trigger;
             lock (syncLock)
             {
@@ -116,8 +119,10 @@ namespace SOM3.Classes.XpoSqlTriggers
         public static void update(string name)
         {
             if (!session.IsConnected)
+            {
+                session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;      
                 session.Connect();
-
+            }
             XpoSQLTriggerInfo trigger;
             lock (syncLock)
             {
@@ -140,7 +145,10 @@ namespace SOM3.Classes.XpoSqlTriggers
         public void registerSQLTrigger(string name)
         {
             if (!session.IsConnected)
+            {
+                session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;      
                 session.Connect();
+            }
             XpoSQLTriggerInfo trigger;
             lock (syncLock)
             {
@@ -158,7 +166,10 @@ namespace SOM3.Classes.XpoSqlTriggers
         private DateTime? getSQLTriggerTime(string name)
         {
             if (!session.IsConnected)
+            {
+                session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;      
                 session.Connect();
+            }
             lock (syncLock)
             {
                 return session.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'")).timestamp;
