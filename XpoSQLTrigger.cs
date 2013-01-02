@@ -44,7 +44,8 @@ namespace SOM3.Classes.XpoSqlTriggers
         /// <param name="time">Time in ms to refresh to look for changes (Default is 1000ms)</param>
         public XpoTrigger(double time = 1000)
         {
-            session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;            
+            session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
+            session.LockingOption = LockingOption.None;
             context = SynchronizationContext.Current;
             if (context == null)
             {
@@ -91,7 +92,8 @@ namespace SOM3.Classes.XpoSqlTriggers
         {
             if (!session.IsConnected)
             {
-                session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;      
+                session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
+                session.LockingOption = LockingOption.None;
                 session.Connect();
             }
             XpoSQLTriggerInfo trigger;
@@ -120,7 +122,8 @@ namespace SOM3.Classes.XpoSqlTriggers
         {
             if (!session.IsConnected)
             {
-                session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;      
+                session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
+                session.LockingOption = LockingOption.None;
                 session.Connect();
             }
             XpoSQLTriggerInfo trigger;
@@ -146,7 +149,8 @@ namespace SOM3.Classes.XpoSqlTriggers
         {
             if (!session.IsConnected)
             {
-                session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;      
+                session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
+                session.LockingOption = LockingOption.None;
                 session.Connect();
             }
             XpoSQLTriggerInfo trigger;
@@ -167,7 +171,8 @@ namespace SOM3.Classes.XpoSqlTriggers
         {
             if (!session.IsConnected)
             {
-                session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;      
+                session.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
+                session.LockingOption = LockingOption.None;
                 session.Connect();
             }
             lock (syncLock)
