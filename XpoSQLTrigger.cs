@@ -105,10 +105,9 @@ namespace SOM3.Classes.XpoSqlTriggers
                 UpdateSession.Connect();
             }
             XpoSQLTriggerInfo trigger;
-            lock (updateLock)
-            {
+         
                 trigger = UpdateSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
-            }
+         
             if (trigger == null)
             {
                 trigger = new XpoSQLTriggerInfo(UpdateSession);
@@ -135,17 +134,15 @@ namespace SOM3.Classes.XpoSqlTriggers
                 UpdateSession.Connect();
             }
             XpoSQLTriggerInfo trigger;
-            lock (updateLock)
-            {
+       
                 trigger = UpdateSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
-            }
+         
             if (trigger != null)
             {
-                lock (updateLock)
-                {
+            
                     trigger.timestamp = (DateTime)UpdateSession.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);                
                     trigger.Save();
-                }       
+               
             }
         }
 
@@ -162,10 +159,9 @@ namespace SOM3.Classes.XpoSqlTriggers
                 UpdateSession.Connect();
             }
             XpoSQLTriggerInfo trigger;
-            lock (timeLock)
-            {
+        
                 trigger = UpdateSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
-            }
+          
             if (trigger != null)
             {
                 SQLTriggerEvent obj = new SQLTriggerEvent();
@@ -183,10 +179,9 @@ namespace SOM3.Classes.XpoSqlTriggers
                 TimeSession.LockingOption = LockingOption.None;
                 TimeSession.Connect();
             }
-            lock (timeLock)
-            {
+
                 return TimeSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'")).timestamp;
-            }
+        
         }
     }
 }
