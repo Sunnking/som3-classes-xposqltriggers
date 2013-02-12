@@ -49,10 +49,12 @@ namespace SOM3.Classes.XpoSqlTriggers
         {
             UpdateSession.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
             UpdateSession.LockingOption = LockingOption.None;
+            UpdateSession.IdentityMapBehavior = IdentityMapBehavior.Strong;
 
 
             TimeSession.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
             TimeSession.LockingOption = LockingOption.None;
+            TimeSession.IdentityMapBehavior = IdentityMapBehavior.Strong;
 
             context = SynchronizationContext.Current;
             if (context == null)
@@ -173,15 +175,10 @@ namespace SOM3.Classes.XpoSqlTriggers
 
         private DateTime? getSQLTriggerTime(string name)
         {
-            if (!TimeSession.IsConnected)
-            {
-                TimeSession.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
-                TimeSession.LockingOption = LockingOption.None;
-                TimeSession.Connect();
-            }
-
-                return TimeSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'")).timestamp;
-        
+            TimeSession.Connect();
+            DateTime? returnval = TimeSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'")).timestamp;
+            TimeSession.Disconnect();
+            return returnval;
         }
     }
 }
