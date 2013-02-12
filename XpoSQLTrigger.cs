@@ -49,10 +49,12 @@ namespace SOM3.Classes.XpoSqlTriggers
         {
             UpdateSession.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
             UpdateSession.LockingOption = LockingOption.None;
+            UpdateSession.IdentityMapBehavior = IdentityMapBehavior.Strong;
 
 
             TimeSession.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
             TimeSession.LockingOption = LockingOption.None;
+            TimeSession.IdentityMapBehavior = IdentityMapBehavior.Strong;
 
             context = SynchronizationContext.Current;
             if (context == null)
@@ -105,10 +107,9 @@ namespace SOM3.Classes.XpoSqlTriggers
                 UpdateSession.Connect();
             }
             XpoSQLTriggerInfo trigger;
-            lock (updateLock)
-            {
+         
                 trigger = UpdateSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
-            }
+         
             if (trigger == null)
             {
                 trigger = new XpoSQLTriggerInfo(UpdateSession);
@@ -135,17 +136,15 @@ namespace SOM3.Classes.XpoSqlTriggers
                 UpdateSession.Connect();
             }
             XpoSQLTriggerInfo trigger;
-            lock (updateLock)
-            {
+       
                 trigger = UpdateSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
-            }
+         
             if (trigger != null)
             {
-                lock (updateLock)
-                {
+            
                     trigger.timestamp = (DateTime)UpdateSession.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);                
                     trigger.Save();
-                }       
+               
             }
         }
 
@@ -162,10 +161,9 @@ namespace SOM3.Classes.XpoSqlTriggers
                 UpdateSession.Connect();
             }
             XpoSQLTriggerInfo trigger;
-            lock (timeLock)
-            {
+        
                 trigger = UpdateSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
-            }
+          
             if (trigger != null)
             {
                 SQLTriggerEvent obj = new SQLTriggerEvent();
@@ -177,16 +175,10 @@ namespace SOM3.Classes.XpoSqlTriggers
 
         private DateTime? getSQLTriggerTime(string name)
         {
-            if (!TimeSession.IsConnected)
-            {
-                TimeSession.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
-                TimeSession.LockingOption = LockingOption.None;
-                TimeSession.Connect();
-            }
-            lock (timeLock)
-            {
-                return TimeSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'")).timestamp;
-            }
+            TimeSession.Connect();
+            DateTime? returnval = TimeSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'")).timestamp;
+            TimeSession.Disconnect();
+            return returnval;
         }
     }
 }
