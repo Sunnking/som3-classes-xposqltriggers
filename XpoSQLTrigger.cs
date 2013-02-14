@@ -27,7 +27,7 @@ namespace SOM3.Classes.XpoSqlTriggers
         public DateTime? timestamp { get; set; }
     }
 
-    public class XpoTrigger{
+    public class XpoTrigger :IDisposable{
 
         public delegate void SQLTriggerHandler(Object sender, SQLTriggerEvent e);
         public event SQLTriggerHandler sqlTriggerEvent;        
@@ -179,6 +179,11 @@ namespace SOM3.Classes.XpoSqlTriggers
             DateTime? returnval = TimeSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'")).timestamp;
             TimeSession.Disconnect();
             return returnval;
+        }
+
+        void IDisposable.Dispose()
+        {
+            timer.Enabled = false;
         }
     }
 }
