@@ -38,8 +38,7 @@ namespace SOM3.Classes.XpoSqlTriggers
         System.Timers.Timer timer = new System.Timers.Timer();
         private SynchronizationContext context;
         
-        public static Object updateLock = new Object();        
-        public static Object timeLock = new Object();
+    
 
         /// <summary>
         /// Create a new instance of the XpoTrigger Class
@@ -114,11 +113,9 @@ namespace SOM3.Classes.XpoSqlTriggers
             {
                 trigger = new XpoSQLTriggerInfo(UpdateSession);
                 trigger.triggerName = name;
-                lock (updateLock)
-                {
-                    trigger.timestamp = (DateTime)UpdateSession.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);            
-                    trigger.Save();
-                }
+                trigger.timestamp = (DateTime)UpdateSession.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);            
+                trigger.Save();
+             
             }
 
         }
@@ -184,6 +181,11 @@ namespace SOM3.Classes.XpoSqlTriggers
         void IDisposable.Dispose()
         {
             timer.Enabled = false;
+            UpdateSession.Disconnect();
+            TimeSession.Disconnect();
+            UpdateSession = null;
+            TimeSession = null;
+            triggerList.Clear();
         }
     }
 }
