@@ -27,7 +27,7 @@ namespace SOM3.Classes.XpoSqlTriggers
         public DateTime? timestamp { get; set; }
     }
 
-    public class XpoTrigger{
+    public class XpoTrigger :IDisposable{
 
         public delegate void SQLTriggerHandler(Object sender, SQLTriggerEvent e);
         public event SQLTriggerHandler sqlTriggerEvent;        
@@ -36,10 +36,8 @@ namespace SOM3.Classes.XpoSqlTriggers
 
         List<SQLTriggerEvent> triggerList = new List<SQLTriggerEvent>();
         System.Timers.Timer timer = new System.Timers.Timer();
-        private SynchronizationContext context;
-        
-        public static Object updateLock = new Object();        
-        public static Object timeLock = new Object();
+        private SynchronizationContext context;        
+    
 
         /// <summary>
         /// Create a new instance of the XpoTrigger Class
@@ -61,13 +59,14 @@ namespace SOM3.Classes.XpoSqlTriggers
             {
                 context = new SynchronizationContext();
             }
+            timer.AutoReset = true;
             timer.Interval = time;
-            timer.Enabled = true;
             timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            timer.Enabled = true;                        
         }
 
         private void OnTimedEvent(object source, ElapsedEventArgs e)
-        {
+        {            
             // check all registered permissions...
             DateTime? temp;
 
@@ -114,11 +113,9 @@ namespace SOM3.Classes.XpoSqlTriggers
             {
                 trigger = new XpoSQLTriggerInfo(UpdateSession);
                 trigger.triggerName = name;
-                lock (updateLock)
-                {
-                    trigger.timestamp = (DateTime)UpdateSession.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);            
-                    trigger.Save();
-                }
+                trigger.timestamp = (DateTime)UpdateSession.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);            
+                trigger.Save();
+             
             }
 
         }
@@ -129,23 +126,16 @@ namespace SOM3.Classes.XpoSqlTriggers
         /// <param name="name">Event Name</param>
         public static void update(string name)
         {
-            if (!UpdateSession.IsConnected)
-            {
-                UpdateSession.OptimisticLockingReadBehavior = OptimisticLockingReadBehavior.Ignore;
-                UpdateSession.LockingOption = LockingOption.None;
-                UpdateSession.Connect();
-            }
-            XpoSQLTriggerInfo trigger;
-       
+                UpdateSession.Connect();                
+                XpoSQLTriggerInfo trigger;
                 trigger = UpdateSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
-         
-            if (trigger != null)
-            {
-            
-                    trigger.timestamp = (DateTime)UpdateSession.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);                
+                if (trigger != null)
+                {
+                    trigger.timestamp = (DateTime)UpdateSession.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);
                     trigger.Save();
-               
-            }
+                }
+                UpdateSession.Disconnect();
+            
         }
 
         /// <summary>
@@ -175,10 +165,24 @@ namespace SOM3.Classes.XpoSqlTriggers
 
         private DateTime? getSQLTriggerTime(string name)
         {
-            TimeSession.Connect();
-            DateTime? returnval = TimeSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'")).timestamp;
-            TimeSession.Disconnect();
+            DateTime? returnval;
+            lock (TimeSession)
+            {
+                TimeSession.Connect();
+                returnval = TimeSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'")).timestamp;
+                TimeSession.Disconnect();                
+            }
             return returnval;
+        }
+
+        public void Dispose()
+        {
+            timer.Enabled = false;
+            UpdateSession.Disconnect();
+            TimeSession.Disconnect();            
+            UpdateSession = null;
+            TimeSession = null;
+            triggerList.Clear();
         }
     }
 }
