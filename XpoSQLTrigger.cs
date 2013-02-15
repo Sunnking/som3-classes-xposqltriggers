@@ -180,8 +180,6 @@ namespace SOM3.Classes.XpoSqlTriggers
             timer.Enabled = false;
             UpdateSession.Disconnect();
             TimeSession.Disconnect();            
-            UpdateSession = null;
-            TimeSession = null;
             triggerList.Clear();
         }
     }
