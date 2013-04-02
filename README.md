@@ -19,7 +19,7 @@ XpoTrigger trigger = new XPOTrigger();
 trigger.registerSQLTrigger("Trigger Name");
 trigger.sqlTriggerEvent += TriggerEvent;
 
-private void LoadCreatedTrigger(Object sender, SQLTriggerEvent e)
+private void TriggerEvent(Object sender, SQLTriggerEvent e)
 {
   // Refresh XPCollection Here
 }
