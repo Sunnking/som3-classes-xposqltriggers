@@ -134,8 +134,22 @@ namespace SOM3.Classes.XpoSqlTriggers
                     trigger.timestamp = (DateTime)UpdateSession.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);
                     trigger.Save();
                 }
-                UpdateSession.Disconnect();
-            
+                UpdateSession.Disconnect();            
+        }
+
+        /// <summary>
+        /// Update event
+        /// </summary>
+        /// <param name="name">Event Name</param>
+        public static void update(string name, Session session1)
+        {            
+            XpoSQLTriggerInfo trigger;
+            trigger = session1.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
+            if (trigger != null)
+            {
+                trigger.timestamp = (DateTime)session1.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);
+                trigger.Save();
+            }            
         }
 
         /// <summary>
