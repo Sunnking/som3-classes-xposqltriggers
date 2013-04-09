@@ -145,12 +145,19 @@ namespace SOM3.Classes.XpoSqlTriggers
         public static void update(string name, Session session1)
         {            
             XpoSQLTriggerInfo trigger;
-            trigger = session1.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
-            if (trigger != null)
+            try
             {
-                trigger.timestamp = (DateTime)session1.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);
-                trigger.Save();
-            }            
+                trigger = session1.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
+
+                session1.BeginTransaction();
+                if (trigger != null)
+                {
+                    trigger.timestamp = (DateTime)session1.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);
+                    trigger.Save();
+                }
+                session1.CommitTransaction();
+            }
+            catch { }
         }
 
         /// <summary>
