@@ -124,6 +124,7 @@ namespace SOM3.Classes.XpoSqlTriggers
         /// Update event
         /// </summary>
         /// <param name="name">Event Name</param>
+        [Obsolete("Method is deprecated, please provide the session in the method")]
         public static void update(string name)
         {
                 UpdateSession.Connect();                
