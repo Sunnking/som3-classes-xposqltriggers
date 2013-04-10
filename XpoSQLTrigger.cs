@@ -14,8 +14,19 @@ namespace SOM3.Classes.XpoSqlTriggers
         public XpoSQLTriggerInfo(Session session) : base(session) { }
         public XpoSQLTriggerInfo() : base() { }
 
-        public string triggerName;
-        public DateTime? timestamp;
+        private string _triggerName;
+        public string triggerName         
+        {
+            get { return _triggerName; }
+            set { SetPropertyValue("triggerName", ref _triggerName, value); }
+        }
+
+        private DateTime? _timestamp;
+        public DateTime? timestamp
+        {
+            get { return _timestamp; }
+            set { SetPropertyValue("timestamp", ref _timestamp, value); }
+        }
     }
 
     /// <summary>
