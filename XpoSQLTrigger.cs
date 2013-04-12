@@ -119,15 +119,17 @@ namespace SOM3.Classes.XpoSqlTriggers
             XpoSQLTriggerInfo trigger;
          
                 trigger = UpdateSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
-         
-            if (trigger == null)
-            {
-                trigger = new XpoSQLTriggerInfo(UpdateSession);
-                trigger.triggerName = name;
-                trigger.timestamp = (DateTime)UpdateSession.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);            
-                trigger.Save();
-             
-            }
+
+                if (trigger == null)
+                {
+                    trigger = new XpoSQLTriggerInfo(UpdateSession);
+                    trigger.triggerName = name;
+                    trigger.timestamp = (DateTime)UpdateSession.Evaluate(typeof(XPObjectType), new FunctionOperator(FunctionOperatorType.Now), null);
+                    trigger.Save();
+
+                }
+                else
+                    trigger.Reload();
 
         }
 
@@ -197,15 +199,20 @@ namespace SOM3.Classes.XpoSqlTriggers
         }
 
         private DateTime? getSQLTriggerTime(string name)
-        {
-            DateTime? returnval;
+        {            
+            XpoSQLTriggerInfo trig;
             lock (TimeSession)
             {
                 TimeSession.Connect();
-                returnval = TimeSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'")).timestamp;
+                 trig = TimeSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
+                if (trig != null)
+                    trig.Reload();
                 TimeSession.Disconnect();                
             }
-            return returnval;
+            if (trig != null)
+                return trig.timestamp;
+            else
+                return null;
         }
 
         public void Dispose()
