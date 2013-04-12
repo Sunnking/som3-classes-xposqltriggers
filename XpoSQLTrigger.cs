@@ -201,18 +201,19 @@ namespace SOM3.Classes.XpoSqlTriggers
         private DateTime? getSQLTriggerTime(string name)
         {            
             XpoSQLTriggerInfo trig;
+            DateTime? returnval= null;
             lock (TimeSession)
             {
                 TimeSession.Connect();
                  trig = TimeSession.FindObject<XpoSQLTriggerInfo>(CriteriaOperator.Parse("[triggerName] = '" + name + "'"));
-                if (trig != null)
-                    trig.Reload();
+                 if (trig != null)
+                 {
+                     trig.Reload();
+                     returnval = trig.timestamp;
+                 }
                 TimeSession.Disconnect();                
             }
-            if (trig != null)
-                return trig.timestamp;
-            else
-                return null;
+            return returnval;
         }
 
         public void Dispose()
