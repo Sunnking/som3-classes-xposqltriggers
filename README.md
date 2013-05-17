@@ -5,7 +5,7 @@ This class allows XPO to be used in Multi-User applications and create triggers 
 
 ###Usage###
 
-~~~c#
+:::c#
 using SOM3.Classes.XpoSqlTriggers;
 
 //Register Trigger
@@ -23,11 +23,10 @@ private void TriggerEvent(Object sender, SQLTriggerEvent e)
 {
   // Refresh XPCollection Here
 }
-~~~
 
 ###Sample Program###
 
-~~~c#
+:::c#
 XpoTrigger.register("test");
 XpoTrigger.register("test2");
 XpoTrigger trig = new XpoTrigger();
@@ -44,4 +43,3 @@ private void triggerevent(Object sender, SQLTriggerEvent e)
 {
 	Console.WriteLine(e.name);
 }
-~~~
