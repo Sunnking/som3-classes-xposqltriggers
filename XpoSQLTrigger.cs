@@ -7,7 +7,7 @@ using DevExpress.Data.Filtering;
 using System.Timers;
 using System.Threading;
 
-namespace SOM3.Classes.XpoSqlTriggers
+namespace SOM4.Classes.XpoSqlTriggers
 {
     class XpoSQLTriggerInfo : XPObject
     {

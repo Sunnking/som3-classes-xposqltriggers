@@ -6,7 +6,7 @@ This class allows XPO to be used in Multi-User applications and create triggers 
 ###Usage###
 
 	:::c#
-		using SOM3.Classes.XpoSqlTriggers;
+		using SOM4.Classes.XpoSqlTriggers;
 		
 		//Register Trigger
 		XpoTrigger.register("Trigger Name");
